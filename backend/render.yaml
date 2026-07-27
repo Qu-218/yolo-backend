@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: warm-plm-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: "80"
+      - key: PYTHON_VERSION
+        value: "3.11"
+    healthCheckPath: /health

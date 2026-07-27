@@ -1,0 +1,143 @@
+===================================
+暖记PLM 后端 - Render 部署指南
+===================================
+
+一、为什么选择 Render？
+========================
+
+✅ 免费tier
+✅ 支持Docker部署
+✅ 自动休眠（15分钟无请求后休眠）
+✅ 访问时自动唤醒
+✅ 提供免费域名：https://your-service.onrender.com
+
+二、部署步骤
+============
+
+1. 注册 Render 账号
+   https://render.com/register
+
+2. 连接 GitHub/GitLab
+   - 登录后点击 "New +"
+   - 选择 "Web Service"
+   - 连接你的 GitHub 或 GitLab 账号
+
+3. 创建仓库并上传代码
+   - 在 GitHub 创建新仓库（如：warm-plm-backend）
+   - 上传 backend 目录下的所有文件
+
+4. 配置 Render
+   - 选择你创建的仓库
+   - 填写配置：
+     - Name: warm-plm-backend
+     - Environment: Docker
+     - Branch: main (或 master)
+     - Plan: Free
+   - 点击 "Create Web Service"
+
+5. 等待部署
+   - Render 会自动构建 Docker 镜像
+   - 构建时间约 5-10 分钟
+   - 部署完成后自动分配域名
+
+6. 访问 API
+   - 访问：https://warm-plm-backend.onrender.com
+   - 健康检查：https://warm-plm-backend.onrender.com/health
+   - API 文档：https://warm-plm-backend.onrender.com/docs
+
+三、需要上传的文件
+==================
+
+backend/
+├── main.py              # FastAPI主应用
+├── enhance.py           # 低光照增强模块
+├── utils.py             # 工具函数
+├── requirements.txt     # Python依赖
+├── Dockerfile           # Docker构建配置
+├── render.yaml          # Render配置文件（可选）
+└── weights/
+    └── yolov8n.pt       # YOLO模型权重
+
+四、配置说明
+============
+
+Dockerfile 端口：80
+环境变量：无需额外配置
+资源限制：Free tier 提供 512MB RAM + 0.1 CPU
+
+五、在小程序中使用
+==================
+
+部署完成后，将小程序中的后端地址改为：
+https://warm-plm-backend.onrender.com
+
+例如：
+const API_BASE = 'https://warm-plm-backend.onrender.com';
+
+六、休眠机制
+============
+
+Render Free tier 有休眠机制：
+- 15分钟无请求后自动休眠
+- 下次访问时自动唤醒
+- 唤醒时间约 30-60 秒
+
+建议：
+- 可以设置定时任务每10分钟访问一次，防止休眠
+- 或者接受首次访问的延迟
+
+七、更新代码
+============
+
+如果需要更新代码：
+1. 修改本地文件
+2. 推送到 GitHub（git push）
+3. Render 自动重新部署
+
+八、查看日志
+============
+
+在 Render 控制台：
+1. 点击你的服务
+2. 点击 "Logs" 查看实时日志
+
+九、自定义域名
+==============
+
+在 Render 控制台：
+1. 点击你的服务
+2. 点击 "Settings"
+3. 在 "Custom Domains" 中添加你的域名
+
+十、免费tier限制
+================
+
+- 内存：512MB
+- CPU：0.1 核
+- 存储：1GB
+- 带宽：100GB/月
+- 休眠：15分钟无请求后休眠
+
+注意：YOLOv8 模型加载需要较多内存，可能需要升级到付费plan
+
+十一、常见问题
+==============
+
+Q: 构建失败怎么办？
+A: 检查构建日志，常见原因：
+   - 依赖下载失败
+   - 模型文件过大
+   - 内存不足
+
+Q: 访问时返回 502 错误？
+A: 可能是服务正在唤醒，等待 30-60 秒后重试
+
+Q: 如何防止休眠？
+A: 可以使用定时任务服务（如 UptimeRobot）每 10 分钟访问一次
+
+Q: 内存不足怎么办？
+A: Free tier 只有 512MB，可能需要升级到付费 plan（$7/月）
+
+===================================
+部署完成，无需本地服务！
+===================================
